@@ -7,6 +7,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/ozonmp/omp-bot/internal/app/commands/demo"
 	"github.com/ozonmp/omp-bot/internal/app/path"
+	"github.com/ozonmp/omp-bot/internal/app/commands/loyalty/point"
 )
 
 type Commander interface {
@@ -34,7 +35,8 @@ type Router struct {
 	// payment
 	// storage
 	// streaming
-	// business
+	// loyalty
+	loyaltyCommander Commander
 	// work
 	// service
 	// exchange
@@ -69,7 +71,8 @@ func NewRouter(
 		// payment
 		// storage
 		// streaming
-		// business
+		// loyalty
+		loyaltyCommander : point.NewPointCommander(bot),
 		// work
 		// service
 		// exchange
@@ -120,8 +123,6 @@ func (c *Router) handleCallback(callback *tgbotapi.CallbackQuery) {
 		break
 	case "travel":
 		break
-	case "loyalty":
-		break
 	case "bank":
 		break
 	case "subscription":
@@ -136,8 +137,8 @@ func (c *Router) handleCallback(callback *tgbotapi.CallbackQuery) {
 		break
 	case "streaming":
 		break
-	case "business":
-		break
+	case "loyalty":
+		c.loyaltyCommander.HandleCallback(callback, callbackPath)
 	case "work":
 		break
 	case "service":
@@ -191,8 +192,6 @@ func (c *Router) handleMessage(msg *tgbotapi.Message) {
 		break
 	case "travel":
 		break
-	case "loyalty":
-		break
 	case "bank":
 		break
 	case "subscription":
@@ -207,8 +206,8 @@ func (c *Router) handleMessage(msg *tgbotapi.Message) {
 		break
 	case "streaming":
 		break
-	case "business":
-		break
+	case "loyalty":
+		c.loyaltyCommander.HandleCommand(msg, commandPath)
 	case "work":
 		break
 	case "service":
